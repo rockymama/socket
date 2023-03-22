@@ -8,7 +8,7 @@ public class Myserver
 	{
 		try
 		{
-			ServerSocket ss = new ServerSocket (21003);
+			ServerSocket ss = new ServerSocket (420);
 			Socket s = ss.accept();
 		
 			DataInputStream dis = new DataInputStream(s.getInputStream()); 					
@@ -44,7 +44,7 @@ public class Myclient
 	{
 		try
 		{
-			Socket s = new Socket("localhost", 21003);
+			Socket s = new Socket("localhost", 420);
 			DataInputStream dis= new DataInputStream(s.getInputStream()); 
 			DataOutputStream dout = new DataOutputStream(s.getOutputStream()); 
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
