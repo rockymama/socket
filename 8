@@ -1,68 +1,70 @@
-Server Program (Server1.java) – 
-import java.io.DataInputStream; 
-import java.io.DataOutputStream; 
-import java.io.FileOutputStream; 
-import java.io.File; 
-import java.net.ServerSocket; 
-import java.net.Socket; 
-import java.util.Scanner;
+Server Program (Myserver.java) –  
+import java.io.*;
+import java.net.*;
 
-public class Server1
+public class Myserver
 {
-	private static DataOutputStream dataOutputStream = null; 
-	private static DataInputStream dataInputStream = null;
-	public static void main(String[] args) 
+	public static void main(String[] args)
 	{
-		try(ServerSocket serverSocket = new ServerSocket(5000))
+		try
 		{
-			System.out.println("listening to port:5000"); 
-			Socket clientSocket = serverSocket.accept();
-			System.out.println(clientSocket+" connected.");
-			dataInputStream = new DataInputStream(clientSocket.getInputStream()); 
-			dataOutputStream = new DataOutputStream(clientSocket.getOutputStream()); 
-			String filename = dataInputStream.readUTF(); 
-			System.out.println("File name is "+filename);
-			File f=new File(filename);
-			Scanner sc = new Scanner(f); 
-			String msg=""; 
-			while (sc.hasNextLine()) 
-			{ 
-				msg+=sc.nextLine();
-				msg+="\n";
+			ServerSocket ss = new ServerSocket (21003);
+			Socket s = ss.accept();
+		
+			DataInputStream dis = new DataInputStream(s.getInputStream()); 					
+			DataOutputStream dout = new DataOutputStream(s.getOutputStream()); 
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); 
+			String str2= "";
+	
+			while(!str2.equals("bye"))
+			{
+				String str1 = (String)dis.readUTF();
+				System.out.println("CLIENT : " + str1);
+				str2= br.readLine();
+				dout.writeUTF (str2);
 			}
-			dataOutputStream.writeUTF(msg);
-			dataInputStream.close();
-			dataOutputStream.close();
-			clientSocket.close();
-		} catch (Exception e) {e.printStackTrace();}
-	}
+			s.close();
+			ss.close();
+			dis.close();
+			dout.close();
+		}
+		catch (Exception e)
+		{
+			System.out.print(e);
+		}
+	}	
 }
 
-Client Program (Client1.java) – 
+Client Program (Client.java) –  
 import java.io.*;
-import java.net.Socket; 
-import java.util.Scanner;
-
-public class Client1 
+import java.net.*;
+public class Myclient
 {
-	private static DataOutputStream dataOutputStream = null; 
-	private static DataInputStream dataInputStream = null;
-
-	public static void main(String[] args) 
+	public static void main(String[] args)
 	{
-		try(Socket socket = new Socket("localhost",5000)) 
-		{ 
-			dataInputStream = new DataInputStream(socket.getInputStream());
-			dataOutputStream = new DataOutputStream(socket.getOutputStream()); 
-			Scanner sc = new Scanner(System.in);
-			System.out.println("Enter the absolute path of a file:");
-			String filepath = sc.nextLine();	
-			System.out.println("File name is"+ filepath); 
-			dataOutputStream.writeUTF(filepath);
-			String msg=dataInputStream.readUTF();
-			System.out.println("Contents of file is: "+msg); 
-			dataInputStream.close();
-			dataInputStream.close(); 
-		} catch(Exception e) { e.printStackTrace();}
+		try
+		{
+			Socket s = new Socket("localhost", 21003);
+			DataInputStream dis= new DataInputStream(s.getInputStream()); 
+			DataOutputStream dout = new DataOutputStream(s.getOutputStream()); 
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			
+			String str2= " ";
+	
+			while(!str2.equals("bye"))
+			{
+				String str1 = br.readLine();
+				dout.writeUTF (str1);
+				str2 = (String)dis.readUTF (); 
+				System.out.println("SERVER: " + str2);
+			}
+			s.close();
+			dis.close();
+			dout.close();
+		}
+		catch (Exception e)
+		{
+			System.out.println(e);
+		}
 	}
 }
